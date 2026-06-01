@@ -1,0 +1,227 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #f4f6fb;
+  --panel: #ffffff;
+  --text: #1f2937;
+  --muted: #526175;
+  --line: #d8deea;
+  --muted-fill: #eff2f8;
+  --accent: #0c66a1;
+  --accent-strong: #095089;
+  --error: #a81b1b;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Manrope', 'Avenir Next', 'Segoe UI', Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.card,
+.report-panel,
+.login-panel {
+  width: min(980px, 100%);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 8px 22px rgba(20, 30, 49, 0.08);
+}
+
+.login-panel,
+.report-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.report-heading,
+.login-subtitle,
+.report-subtitle {
+  margin: 0;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.01rem;
+}
+
+.login-subtitle,
+.report-subtitle {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.input-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.login-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.login-form input[type='password'] {
+  min-width: 260px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0.5rem 0.65rem;
+  border-radius: 7px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+button {
+  border: 1px solid transparent;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 7px;
+  padding: 0.5rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+button[disabled] {
+  opacity: 0.56;
+  cursor: not-allowed;
+}
+
+button:hover:not([disabled]) {
+  background: var(--accent-strong);
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #114f8a;
+  outline-offset: 2px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.toolbar button {
+  padding: 0.45rem 0.75rem;
+}
+
+.report-table-wrap {
+  overflow-x: auto;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+  table-layout: fixed;
+}
+
+.report-table th,
+.report-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.45rem 0.55rem;
+  text-align: left;
+  font-size: 0.87rem;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+.report-table th {
+  position: sticky;
+  top: 0;
+  background: var(--muted-fill);
+  z-index: 1;
+}
+
+.report-cell {
+  max-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.report-cell--centerName,
+.report-cell--accountNumber {
+  max-width: 160px;
+}
+
+.report-cell--studentName,
+.report-cell--parentName {
+  max-width: 180px;
+}
+
+.report-cell--phoneNumber {
+  max-width: 150px;
+}
+
+.report-cell--email {
+  max-width: 220px;
+}
+
+th {
+  white-space: nowrap;
+}
+
+.report-table tbody tr:hover {
+  background: #f9fbff;
+}
+
+.message {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.message--error {
+  color: var(--error);
+}
+
+.message--status {
+  color: var(--muted);
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 0.75rem;
+  }
+
+  .report-table {
+    min-width: 820px;
+  }
+
+  .login-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .login-form input[type='password'] {
+    min-width: 0;
+    width: 100%;
+  }
+}

@@ -1,0 +1,4 @@
+run = "bash -lc 'npm --prefix frontend ci && npm --prefix frontend run build && cargo run --manifest-path backend/Cargo.toml'"
+
+[nix]
+channel = "stable-24.05"
