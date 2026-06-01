@@ -34,3 +34,8 @@ expertMode = true
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["./backend/target/release/backend"]
+build = ["bash", "-c", "npm --prefix frontend install && npm --prefix frontend run build && cargo build --release --manifest-path backend/Cargo.toml"]
