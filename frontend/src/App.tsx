@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchReport, login, logout } from './api/client';
 import {
   getApiErrorCode,
@@ -11,6 +11,7 @@ import type { ReportRow } from './api/types';
 import { LoginPanel } from './components/LoginPanel';
 import { ReportScreen } from './components/ReportScreen';
 import { exportReportCsv, exportReportXlsx } from './lib/export';
+import { ALL_CENTERS_VALUE, buildCenterOptions, filterRowsByCenter } from './lib/report';
 
 function App() {
   const [isCheckingSession, setIsCheckingSession] = useState(true);
@@ -18,14 +19,24 @@ function App() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isReportLoading, setIsReportLoading] = useState(false);
   const [rows, setRows] = useState<ReportRow[]>([]);
+  const [selectedCenterName, setSelectedCenterName] = useState(ALL_CENTERS_VALUE);
   const [loginError, setLoginError] = useState<LoginFailureState | null>(null);
   const [reportError, setReportError] = useState<ReportFailureState | null>(null);
   const reportRequestIdRef = useRef(0);
   const isAuthenticatedRef = useRef(isAuthenticated);
+  const centerOptions = useMemo(() => buildCenterOptions(rows), [rows]);
+  const filteredRows = useMemo(() => filterRowsByCenter(rows, selectedCenterName), [rows, selectedCenterName]);
 
   useEffect(() => {
     isAuthenticatedRef.current = isAuthenticated;
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    const selectedCenterExists = centerOptions.some((option) => option.value === selectedCenterName);
+    if (!selectedCenterExists) {
+      setSelectedCenterName(ALL_CENTERS_VALUE);
+    }
+  }, [centerOptions, selectedCenterName]);
 
   const createReportLoadToken = () => {
     reportRequestIdRef.current += 1;
@@ -61,6 +72,7 @@ function App() {
       if (failure === 'session_expired') {
         setIsAuthenticated(false);
         setRows([]);
+        setSelectedCenterName(ALL_CENTERS_VALUE);
         setLoginError('session_expired');
         return;
       }
@@ -111,6 +123,7 @@ function App() {
     createReportLoadToken();
     setIsAuthenticated(false);
     setRows([]);
+    setSelectedCenterName(ALL_CENTERS_VALUE);
     setLoginError(null);
     setReportError(null);
     setIsCheckingSession(false);
@@ -123,11 +136,11 @@ function App() {
   };
 
   const handleExportCsv = () => {
-    exportReportCsv(rows);
+    exportReportCsv(filteredRows);
   };
 
   const handleExportXlsx = () => {
-    void exportReportXlsx(rows);
+    void exportReportXlsx(filteredRows);
   };
 
   if (isCheckingSession) {
@@ -151,9 +164,13 @@ function App() {
   return (
     <main className="app-shell">
       <ReportScreen
-        rows={rows}
+        rows={filteredRows}
+        totalRowCount={rows.length}
+        centerOptions={centerOptions}
+        selectedCenterName={selectedCenterName}
         isLoading={isReportLoading}
         error={reportError}
+        onCenterChange={setSelectedCenterName}
         onRefresh={loadReport}
         onExportCsv={handleExportCsv}
         onExportXlsx={handleExportXlsx}

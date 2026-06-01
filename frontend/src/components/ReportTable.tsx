@@ -16,7 +16,7 @@ function getCellClassName(key: ReportColumnKey): string {
 }
 
 interface ReportTableProps {
-  rows: ReportRow[];
+  rows: readonly ReportRow[];
 }
 
 export function ReportTable({ rows }: ReportTableProps) {

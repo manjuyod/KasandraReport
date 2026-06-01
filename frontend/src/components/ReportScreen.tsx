@@ -2,11 +2,16 @@ import { ReportTable } from './ReportTable';
 import { ReportToolbar } from './ReportToolbar';
 import type { ReportFailureState } from '../api/errors';
 import type { ReportRow } from '../api/types';
+import type { CenterOption } from '../lib/report';
 
 interface ReportScreenProps {
-  rows: ReportRow[];
+  rows: readonly ReportRow[];
+  totalRowCount: number;
+  centerOptions: readonly CenterOption[];
+  selectedCenterName: string;
   isLoading: boolean;
   error: ReportFailureState | null;
+  onCenterChange: (centerName: string) => void;
   onRefresh: () => void;
   onExportCsv: () => void;
   onExportXlsx: () => void;
@@ -20,15 +25,28 @@ const errorMessage: Record<ReportFailureState, string> = {
   unexpected: 'Unexpected error while loading report. Retry.',
 };
 
+const formatRowCount = (count: number): string => `${count} ${count === 1 ? 'row' : 'rows'}`;
+
 export function ReportScreen({
   rows,
+  totalRowCount,
+  centerOptions,
+  selectedCenterName,
   isLoading,
   error,
+  onCenterChange,
   onRefresh,
   onExportCsv,
   onExportXlsx,
   onLogout,
 }: ReportScreenProps) {
+  const filteredRowCount = rows.length;
+  const hasFilteredRows = filteredRowCount > 0;
+  const reportSubtitle =
+    filteredRowCount === totalRowCount
+      ? `${formatRowCount(totalRowCount)} loaded.`
+      : `${formatRowCount(filteredRowCount)} of ${formatRowCount(totalRowCount)} shown.`;
+
   if (isLoading) {
     return (
       <section className="report-panel">
@@ -45,6 +63,11 @@ export function ReportScreen({
         <ReportToolbar
           disableRefresh={false}
           hasData={false}
+          centerOptions={centerOptions}
+          selectedCenterName={selectedCenterName}
+          totalRowCount={totalRowCount}
+          filteredRowCount={filteredRowCount}
+          onCenterChange={onCenterChange}
           onRefresh={onRefresh}
           onExportCsv={onExportCsv}
           onExportXlsx={onExportXlsx}
@@ -57,19 +80,24 @@ export function ReportScreen({
     );
   }
 
-  if (rows.length === 0) {
+  if (!hasFilteredRows) {
     return (
       <section className="report-panel">
         <ReportToolbar
           disableRefresh={false}
           hasData={false}
+          centerOptions={centerOptions}
+          selectedCenterName={selectedCenterName}
+          totalRowCount={totalRowCount}
+          filteredRowCount={filteredRowCount}
+          onCenterChange={onCenterChange}
           onRefresh={onRefresh}
           onExportCsv={onExportCsv}
           onExportXlsx={onExportXlsx}
           onLogout={onLogout}
         />
         <p role="status" aria-live="polite" className="message message--status">
-          No rows returned from report endpoint.
+          {totalRowCount === 0 ? 'No rows returned from report endpoint.' : 'No rows match the selected Center.'}
         </p>
       </section>
     );
@@ -78,13 +106,18 @@ export function ReportScreen({
   return (
     <section className="report-panel">
       <header className="report-heading">
-        <h1 id="report-title">Kassandra Report</h1>
-        <p className="report-subtitle">Signed in and loaded successfully.</p>
+        <h1 id="report-title">Student Info Report</h1>
+        <p className="report-subtitle">{reportSubtitle}</p>
       </header>
 
       <ReportToolbar
         disableRefresh={false}
-        hasData={rows.length > 0}
+        hasData={hasFilteredRows}
+        centerOptions={centerOptions}
+        selectedCenterName={selectedCenterName}
+        totalRowCount={totalRowCount}
+        filteredRowCount={filteredRowCount}
+        onCenterChange={onCenterChange}
         onRefresh={onRefresh}
         onExportCsv={onExportCsv}
         onExportXlsx={onExportXlsx}

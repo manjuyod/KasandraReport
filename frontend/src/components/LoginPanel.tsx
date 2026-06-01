@@ -49,7 +49,7 @@ export function LoginPanel({ isLoading, error, onSubmit }: LoginPanelProps) {
 
   return (
     <section className="card login-panel" aria-labelledby="login-title">
-      <h1 id="login-title">Kassandra Report</h1>
+      <h1 id="login-title">Student Info Report</h1>
       <p className="login-subtitle">Sign in with your workspace password to view the report.</p>
       <form className="login-form" onSubmit={onFormSubmit}>
         <label htmlFor="password-input" className="input-label">

@@ -116,7 +116,8 @@ button:hover:not([disabled]) {
 }
 
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible {
   outline: 2px solid #114f8a;
   outline-offset: 2px;
 }
@@ -125,11 +126,41 @@ input:focus-visible {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  align-items: center;
   margin-bottom: 0.75rem;
 }
 
 .toolbar button {
   padding: 0.45rem 0.75rem;
+}
+
+.toolbar-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.toolbar-filter select {
+  min-width: 190px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  border-radius: 7px;
+  padding: 0.43rem 0.6rem;
+  font: inherit;
+}
+
+.toolbar-filter select:disabled {
+  color: var(--muted);
+  background: var(--muted-fill);
+}
+
+.toolbar-count {
+  color: var(--muted);
+  font-size: 0.86rem;
+  margin-right: auto;
 }
 
 .report-table-wrap {
@@ -172,9 +203,15 @@ input:focus-visible {
   max-width: 160px;
 }
 
-.report-cell--studentName,
 .report-cell--parentName {
   max-width: 180px;
+}
+
+.report-cell--studentName {
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .report-cell--phoneNumber {
@@ -223,5 +260,15 @@ th {
   .login-form input[type='password'] {
     min-width: 0;
     width: 100%;
+  }
+
+  .toolbar-filter,
+  .toolbar-filter select {
+    width: 100%;
+  }
+
+  .toolbar-count {
+    width: 100%;
+    margin-right: 0;
   }
 }

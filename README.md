@@ -1,6 +1,6 @@
-# Kassandra Report
+# Student Info Report
 
-Kassandra Report is a single-binary Rust API with a React/Vite frontend.
+Student Info Report is a single-binary Rust API with a React/Vite frontend.
 The backend exposes authenticated API routes and can serve the compiled frontend for single-page-app (SPA) usage when `frontend/dist` is present.
 
 ## Project overview
@@ -196,12 +196,13 @@ ORDER BY
 
 ## Export behavior
 
-- **CSV** (`kassandra-report.csv`)
+- **CSV** (`Student Info Run YYYY-MM-DD.csv`)
   - UTF-8 BOM prepended.
   - Every field is CSV-escaped.
   - Cells that look like formulas are prefixed with `'` to reduce spreadsheet formula injection risk.
-- **XLSX** (`kassandra-report.xlsx`)
+- **XLSX** (`Student Info Run YYYY-MM-DD.xlsx`)
   - Values are sanitized the same way before writing.
+  - Column filters are enabled on the report sheet.
   - Uses `write-excel-file` browser export with a single `Report` sheet.
 
 ## Troubleshooting

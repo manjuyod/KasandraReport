@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { buildReportCsv, sanitizeSpreadsheetValue } from './export';
+import {
+  buildReportCsv,
+  buildReportDownloadFilename,
+  createXlsxAutoFilterFeature,
+  sanitizeSpreadsheetValue,
+} from './export';
 import type { ReportRow } from '../api/types';
 
 describe('sanitizeSpreadsheetValue', () => {
@@ -49,5 +54,27 @@ describe('buildReportCsv', () => {
     expect(lines[1]).toContain('"Jane, Doe"');
     expect(lines[1]).toContain('"\'\t202-555-0101"');
     expect(csv.split('\r\n')).toHaveLength(2);
+  });
+});
+
+describe('buildReportDownloadFilename', () => {
+  it('uses Student Info Run plus the browser local date', () => {
+    const date = new Date(2026, 5, 1, 12, 30, 0);
+
+    expect(buildReportDownloadFilename('xlsx', date)).toBe('Student Info Run 2026-06-01.xlsx');
+    expect(buildReportDownloadFilename('csv', date)).toBe('Student Info Run 2026-06-01.csv');
+  });
+});
+
+describe('createXlsxAutoFilterFeature', () => {
+  it('inserts an Excel autofilter over the report header and data range', () => {
+    const feature = createXlsxAutoFilterFeature(3);
+    const transform = feature.files?.transform?.['xl/worksheets/sheet{id}.xml']?.transform;
+    const xml =
+      '<?xml version="1.0" ?><worksheet><sheetViews/><sheetData><row r="1"/><row r="2"/><row r="3"/></sheetData></worksheet>';
+
+    expect(transform?.(xml, { sheet: 'Report' }, { sheetIndex: 0, sheetId: '1' })).toContain(
+      '<autoFilter ref="A1:F3"/>',
+    );
   });
 });
