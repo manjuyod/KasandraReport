@@ -88,6 +88,8 @@ No `unixODBC` or other ODBC runtime packages are needed.
 - `cargo run --manifest-path backend/Cargo.toml`
 - `cargo test --manifest-path backend/Cargo.toml`
 
+If the backend is not listening on `8080`, set `BACKEND_PORT` or `BACKEND_URL` before starting the frontend dev server. The Vite `/api` proxy uses `BACKEND_URL`, then `BACKEND_PORT`, then `PORT`, and finally defaults to `8080`.
+
 ## Build / run commands
 
 ### Build

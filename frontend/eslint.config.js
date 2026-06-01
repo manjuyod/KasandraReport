@@ -45,4 +45,12 @@ export default [
       'react/jsx-no-target-blank': 'off',
     },
   },
+  {
+    files: ['*.config.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
 ];
