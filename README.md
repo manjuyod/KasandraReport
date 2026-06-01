@@ -130,71 +130,7 @@ If environment provides `PORT`, backend will bind that port; otherwise it binds 
 
 ## Read-only SQL/account requirement
 
-The SQL query used by `/api/report` is read-only by design. It intentionally preserves this filter:
-
-`ISNULL(i.IsDeleted, 0) <> 0`
-
-Use a read-only database account for runtime and keep destructive SQL out of deployment.
-
-## Report SQL
-
-```sql
-;WITH CenterIds AS (
-    SELECT CenterID
-    FROM (VALUES
-        (6), (8), (11), (13), (15), (16), (19), (20), (22),
-        (24), (49), (56), (57), (60), (87), (103), (110)
-    ) AS v(CenterID)
-),
-ActiveStudentFamilies AS (
-    SELECT DISTINCT
-        s.InquiryId
-    FROM dbo.tblStudents AS s
-    INNER JOIN dbo.tblInquiry AS i
-        ON i.ID = s.InquiryId
-    INNER JOIN CenterIds AS c
-        ON c.CenterID = i.FranchiesId
-    WHERE s.IsDeleted = 0
-      AND s.IsTrail = 'Active'
-      AND ISNULL(i.IsDeleted, 0) <> 0
-)
-SELECT
-    r.FranchiesName AS CenterName,
-    i.ID AS AccountNumber,
-    [Student Name] = LTRIM(RTRIM(STUFF((
-        SELECT ', ' + LTRIM(RTRIM(CONCAT(
-            s2.FirstName,
-            CASE
-                WHEN ISNULL(s2.LastName, '') <> '' THEN ' ' + s2.LastName
-                ELSE ''
-            END
-        )))
-        FROM dbo.tblStudents AS s2
-        WHERE s2.InquiryId = i.ID
-          AND s2.IsDeleted = 0
-          AND s2.IsTrail = 'Active'
-        ORDER BY s2.LastName, s2.FirstName, s2.ID
-        FOR XML PATH(''), TYPE
-    ).value('.', 'nvarchar(max)'), 1, 2, ''))),
-    [Parent Name] = LTRIM(RTRIM(
-        CASE
-            WHEN NULLIF(LTRIM(RTRIM(CONCAT(ISNULL(i.CFirstName, ''), ' ', ISNULL(i.CLastName, '')))), '') IS NOT NULL
-                THEN CONCAT(ISNULL(i.CFirstName, ''), ' ', ISNULL(i.CLastName, ''))
-            ELSE ISNULL(i.ContactName, '')
-        END
-    )),
-    [Phone Number] = i.ContactPhone,
-    [Email] = i.Email
-FROM ActiveStudentFamilies AS f
-INNER JOIN dbo.tblInquiry AS i
-    ON i.ID = f.InquiryId
-INNER JOIN dbo.tblFranchies AS r
-    ON r.ID = i.FranchiesId
-ORDER BY
-    i.FranchiesId,
-    [Parent Name],
-    i.ID;
-```
+The `/api/report` query is read-only by design. Keep the exact SQL in source control out of public-facing documentation, use a read-only database account for runtime, and keep destructive SQL out of deployment.
 
 ## Export behavior
 
